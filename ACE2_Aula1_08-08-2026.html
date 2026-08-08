@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ACE II · Encontro 1 · Por que um contador precisa entender de cultura?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F3F2EA;
+  --paper-2:#FBFAF4;
+  --rule:#C9D8CB;
+  --rule-strong:#9DB8A2;
+  --ink:#16241E;
+  --ink-2:#3C4A43;
+  --gold:#B5811A;
+  --gold-soft:#E8CE86;
+  --green:#2C5A4A;
+  --clay:#8E3A28;
+  --line:rgba(22,36,30,.14);
+  --shadow:0 1px 0 rgba(22,36,30,.06), 0 12px 28px -20px rgba(22,36,30,.45);
+  --display:"Zilla Slab", Georgia, serif;
+  --body:"Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--body);
+  font-size:17px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+/* ---------- ledger paper signature ---------- */
+body::before{
+  content:"";
+  position:fixed; inset:0; z-index:0; pointer-events:none;
+  background:
+    repeating-linear-gradient(to bottom, transparent 0 31px, rgba(157,184,162,.28) 31px 32px),
+    linear-gradient(to right, transparent 0 46px, rgba(142,58,40,.18) 46px 47px, transparent 47px);
+  opacity:.55;
+}
+main,header,footer{position:relative; z-index:1}
+h1,h2,h3,h4{font-family:var(--display); font-weight:600; line-height:1.12; margin:0}
+a{color:var(--green); text-decoration-thickness:1px; text-underline-offset:3px}
+a:hover{color:var(--clay)}
+:focus-visible{outline:2.5px solid var(--gold); outline-offset:3px; border-radius:2px}
+.wrap{width:min(1080px, 92vw); margin:0 auto}
+.mono{font-family:var(--mono); font-variant-numeric:tabular-nums}
+
+/* ---------- top bar ---------- */
+.topbar{
+  position:sticky; top:0; z-index:50;
+  background:rgba(243,242,234,.93);
+  backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);
+}
+.topbar .wrap{display:flex; align-items:center; gap:16px; min-height:54px; flex-wrap:wrap; padding:6px 0}
+.tb-id{font-family:var(--mono); font-size:11.5px; letter-spacing:.11em; text-transform:uppercase; color:var(--ink-2)}
+.tb-nav{display:flex; gap:2px; margin-left:auto; flex-wrap:wrap}
+.tb-nav a{
+  font-family:var(--mono); font-size:11.5px; letter-spacing:.06em;
+  padding:5px 9px; border-radius:3px; text-decoration:none; color:var(--ink-2);
+}
+.tb-nav a:hover{background:rgba(181,129,26,.16); color:var(--ink)}
+.tb-nav a.done{color:var(--green); font-weight:600}
+.tb-nav a.done::before{content:"✓ "}
+
+/* ---------- hero ---------- */
+.hero{padding:64px 0 44px}
+.eyebrow{
+  font-family:var(--mono); font-size:11.5px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--clay); margin-bottom:22px;
+}
+.hero h1{
+  font-size:clamp(2.1rem, 6.4vw, 4.3rem);
+  letter-spacing:-.02em;
+  max-width:19ch;
+}
+.hero h1 em{font-style:italic; color:var(--gold)}
+.hero-sub{
+  margin-top:24px; max-width:56ch; font-size:1.09rem; color:var(--ink-2);
+}
+.hero-meta{
+  margin-top:34px; display:flex; flex-wrap:wrap; gap:0;
+  border-top:1.5px solid var(--ink); border-bottom:1px solid var(--line);
+}
+.hero-meta div{
+  padding:12px 22px 12px 0; margin-right:22px; border-right:1px solid var(--line);
+}
+.hero-meta div:last-child{border-right:0}
+.hero-meta dt{font-family:var(--mono); font-size:10.5px; letter-spacing:.13em; text-transform:uppercase; color:var(--ink-2)}
+.hero-meta dd{margin:3px 0 0; font-family:var(--display); font-size:1.02rem; font-weight:600}
+
+/* ---------- sections ---------- */
+section{padding:52px 0; border-top:1px solid var(--line)}
+.sec-head{display:flex; gap:20px; align-items:baseline; margin-bottom:8px; flex-wrap:wrap}
+.acct{
+  font-family:var(--mono); font-size:12px; letter-spacing:.08em;
+  color:var(--gold); font-weight:600; padding-top:8px;
+  border-top:2px solid var(--gold); flex:0 0 auto;
+}
+.sec-head h2{font-size:clamp(1.5rem, 3.6vw, 2.3rem); letter-spacing:-.015em; max-width:26ch}
+.tempo{
+  margin-left:auto; font-family:var(--mono); font-size:11.5px; letter-spacing:.08em;
+  color:var(--ink-2); border:1px solid var(--line); border-radius:99px; padding:3px 11px;
+  white-space:nowrap;
+}
+.lede{max-width:64ch; color:var(--ink-2); margin:14px 0 30px}
+.lede strong{color:var(--ink)}
+
+/* ---------- cards / panels ---------- */
+.panel{
+  background:var(--paper-2); border:1px solid var(--line); border-radius:5px;
+  padding:24px; box-shadow:var(--shadow); position:relative;
+}
+.panel + .panel{margin-top:16px}
+.grid2{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:16px}
+.grid3{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px}
+.label{font-family:var(--mono); font-size:10.5px; letter-spacing:.13em; text-transform:uppercase; color:var(--ink-2); display:block; margin-bottom:6px}
+
+/* ---------- stamp signature ---------- */
+.stamp{
+  position:absolute; top:-14px; right:14px;
+  font-family:var(--mono); font-weight:600; font-size:12px; letter-spacing:.14em;
+  color:var(--clay); border:2.5px solid var(--clay); border-radius:4px;
+  padding:6px 12px; transform:rotate(-7deg) scale(.4); opacity:0;
+  background:rgba(251,250,244,.85); text-transform:uppercase;
+  transition:transform .38s cubic-bezier(.2,1.5,.4,1), opacity .28s;
+  pointer-events:none;
+}
+.stamp.on{transform:rotate(-7deg) scale(1); opacity:.92}
+@media (prefers-reduced-motion:reduce){
+  .stamp{transition:none}
+  html{scroll-behavior:auto}
+}
+
+/* ---------- buttons ---------- */
+button{font-family:inherit; font-size:inherit; cursor:pointer}
+.btn{
+  background:var(--ink); color:var(--paper-2); border:0; border-radius:4px;
+  padding:10px 18px; font-weight:600; font-size:.95rem; letter-spacing:.01em;
+}
+.btn:hover{background:var(--green)}
+.btn-ghost{
+  background:transparent; color:var(--ink); border:1.5px solid var(--ink);
+  border-radius:4px; padding:8px 15px; font-weight:600; font-size:.9rem;
+}
+.btn-ghost:hover{background:var(--ink); color:var(--paper-2)}
+.chip{
+  background:transparent; border:1.5px solid var(--line); border-radius:99px;
+  padding:6px 14px; font-family:var(--mono); font-size:12px; letter-spacing:.04em;
+  color:var(--ink-2);
+}
+.chip:hover{border-color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--ink); color:var(--paper-2); border-color:var(--ink)}
+
+/* ---------- dinâmica 1: triagem ---------- */
+.tri-item{
+  display:grid; grid-template-columns:1fr auto; gap:14px; align-items:center;
+  padding:14px 0; border-bottom:1px dashed var(--line);
+}
+.tri-item:last-of-type{border-bottom:0}
+.tri-q{font-size:1rem}
+.tri-opts{display:flex; gap:6px; flex-wrap:wrap}
+.tri-opts button{
+  border:1.5px solid var(--line); background:transparent; border-radius:4px;
+  padding:6px 11px; font-size:.85rem; font-weight:500; color:var(--ink-2);
+}
+.tri-opts button:hover{border-color:var(--ink); color:var(--ink)}
+.tri-opts button.sel{background:var(--ink); color:var(--paper-2); border-color:var(--ink)}
+.tri-reveal{
+  grid-column:1/-1; display:none; margin-top:4px;
+  border-left:3px solid var(--gold); padding:10px 0 10px 14px;
+  font-size:.94rem; color:var(--ink-2);
+}
+.tri-reveal.on{display:block}
+.tag{
+  display:inline-block; font-family:var(--mono); font-size:10.5px; letter-spacing:.08em;
+  text-transform:uppercase; background:rgba(181,129,26,.16); color:#7A5610;
+  padding:2px 8px; border-radius:3px; margin-right:6px;
+}
+.score{
+  margin-top:20px; font-family:var(--mono); font-size:13px; letter-spacing:.05em;
+  color:var(--green); font-weight:600;
+}
+
+/* ---------- casos ---------- */
+.caso h3{font-size:1.14rem; margin-bottom:8px}
+.caso p.sit{font-size:.97rem; color:var(--ink-2); margin:0 0 14px}
+.caso .opt{
+  display:block; width:100%; text-align:left; background:transparent;
+  border:1.5px solid var(--line); border-radius:4px; padding:11px 13px;
+  margin-bottom:8px; font-size:.94rem; color:var(--ink); line-height:1.45;
+}
+.caso .opt:hover{border-color:var(--ink-2)}
+.caso .opt.ok{border-color:var(--green); background:rgba(44,90,74,.09); font-weight:500}
+.caso .opt.no{border-color:var(--clay); background:rgba(142,58,40,.07); opacity:.85}
+.fb{
+  display:none; margin-top:6px; border-left:3px solid var(--green);
+  padding:10px 0 10px 14px; font-size:.93rem; color:var(--ink-2);
+}
+.fb.on{display:block}
+
+/* ---------- calculadora ---------- */
+.calc-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:14px}
+input[type=text], input[type=number], select, textarea{
+  width:100%; font-family:var(--mono); font-size:.95rem; color:var(--ink);
+  background:var(--paper); border:1.5px solid var(--line); border-radius:4px;
+  padding:9px 11px;
+}
+textarea{font-family:var(--body); line-height:1.5; resize:vertical}
+input:focus, select:focus, textarea:focus{border-color:var(--gold)}
+.out{
+  margin-top:22px; border-top:1.5px solid var(--ink); padding-top:18px;
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:18px;
+}
+.out div dt{font-family:var(--mono); font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-2)}
+.out div dd{margin:4px 0 0; font-family:var(--display); font-size:1.65rem; font-weight:700; letter-spacing:-.02em}
+.out div dd small{font-size:.85rem; font-weight:500; color:var(--ink-2); font-family:var(--body)}
+.warn{
+  margin-top:18px; font-size:.88rem; color:var(--clay);
+  border-left:3px solid var(--clay); padding-left:13px;
+}
+
+/* ---------- ficha do garimpo ---------- */
+.field{margin-bottom:14px}
+.checks{display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:6px 14px}
+.checks label{display:flex; gap:8px; align-items:flex-start; font-size:.92rem; color:var(--ink-2); cursor:pointer}
+.checks input{margin-top:4px; accent-color:var(--green)}
+pre.ficha{
+  background:var(--ink); color:#E8E6DC; border-radius:5px; padding:18px;
+  font-family:var(--mono); font-size:12.5px; line-height:1.65;
+  white-space:pre-wrap; word-break:break-word; margin:0;
+}
+
+/* ---------- eixos ---------- */
+.eixo{
+  border:1px solid var(--line); border-radius:5px; background:var(--paper-2);
+  padding:0; overflow:hidden;
+}
+.eixo summary{
+  list-style:none; cursor:pointer; padding:15px 18px;
+  display:grid; grid-template-columns:auto 1fr; gap:14px; align-items:baseline;
+}
+.eixo summary::-webkit-details-marker{display:none}
+.eixo summary:hover{background:rgba(181,129,26,.08)}
+.eixo .num{font-family:var(--mono); font-size:11.5px; color:var(--gold); font-weight:600}
+.eixo .tit{font-family:var(--display); font-size:1.06rem; font-weight:600; line-height:1.25}
+.eixo .un{
+  font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--ink-2); display:block; margin-top:5px;
+}
+.eixo .body{padding:0 18px 18px; border-top:1px dashed var(--line); margin-top:2px; padding-top:14px}
+.eixo .body h4{font-family:var(--mono); font-size:10.5px; letter-spacing:.13em; text-transform:uppercase; color:var(--ink-2); font-weight:600; margin:12px 0 5px}
+.eixo .body p{margin:0; font-size:.94rem; color:var(--ink-2)}
+.eixo-list{display:grid; gap:8px}
+
+/* ---------- calendário ---------- */
+.tl{border-left:2px solid var(--rule-strong); margin-left:8px; padding-left:0}
+.tl li{list-style:none; position:relative; padding:0 0 22px 26px}
+.tl li::before{
+  content:""; position:absolute; left:-7px; top:6px; width:12px; height:12px;
+  border-radius:50%; background:var(--paper); border:2px solid var(--rule-strong);
+}
+.tl li.key::before{background:var(--gold); border-color:var(--gold)}
+.tl li.now::before{background:var(--clay); border-color:var(--clay); box-shadow:0 0 0 5px rgba(142,58,40,.16)}
+.tl .d{font-family:var(--mono); font-size:12px; letter-spacing:.06em; color:var(--gold); font-weight:600}
+.tl .t{font-family:var(--display); font-size:1.02rem; font-weight:600; margin:2px 0 3px}
+.tl .r{font-size:.88rem; color:var(--ink-2)}
+.tl li.now .d{color:var(--clay)}
+.bar{display:flex; height:34px; border-radius:4px; overflow:hidden; border:1.5px solid var(--ink); margin:8px 0 10px}
+.bar span{
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--mono); font-size:11px; font-weight:600; color:#fff; letter-spacing:.03em;
+}
+
+/* ---------- vídeos ---------- */
+.vid{border:1px solid var(--line); border-radius:5px; overflow:hidden; background:var(--paper-2)}
+.vid .frame{aspect-ratio:16/9; background:var(--ink)}
+.vid iframe{width:100%; height:100%; border:0; display:block}
+.vid .meta{padding:14px 16px}
+.vid .meta h4{font-size:1rem; font-weight:600; line-height:1.3}
+.vid .meta p{margin:6px 0 0; font-size:.87rem; color:var(--ink-2)}
+.vid .meta .src{font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--gold); display:block; margin-bottom:6px}
+
+/* ---------- combinados / footer ---------- */
+.rules{display:grid; gap:2px}
+.rules div{display:grid; grid-template-columns:auto 1fr; gap:14px; padding:13px 0; border-bottom:1px dashed var(--line)}
+.rules b{font-family:var(--mono); font-size:11.5px; color:var(--gold); padding-top:3px}
+.rules p{margin:0; font-size:.95rem; color:var(--ink-2)}
+.rules p strong{color:var(--ink)}
+footer{background:var(--ink); color:#DCDACF; padding:52px 0 40px; margin-top:20px}
+footer .wrap{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:30px}
+footer h4{font-family:var(--mono); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--gold-soft); margin-bottom:10px}
+footer p, footer li{font-size:.92rem; color:#B9B7AC; margin:0 0 6px}
+footer a{color:#F0EEE3}
+footer ul{list-style:none; padding:0; margin:0}
+.copy-ok{color:var(--green); font-family:var(--mono); font-size:12px; margin-left:10px}
+@media (max-width:640px){
+  body{font-size:16px}
+  .hero{padding:40px 0 30px}
+  .tri-item{grid-template-columns:1fr}
+  .hero-meta div{border-right:0; padding-right:0; margin-right:0; flex:1 0 46%}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <span class="tb-id">ACE II · 5CON5038 · Encontro 1 · 08.08.2026</span>
+    <nav class="tb-nav" id="nav">
+      <a href="#b1" data-b="b1">1. Triagem</a>
+      <a href="#b2" data-b="b2">2. Casos</a>
+      <a href="#b3" data-b="b3">3. Cachê</a>
+      <a href="#b4" data-b="b4">4. Garimpo</a>
+      <a href="#b5" data-b="b5">5. Eixos</a>
+      <a href="#b6" data-b="b6">6. Rota</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<div class="wrap hero">
+  <p class="eyebrow">Universidade Federal do Tocantins · Ciências Contábeis · Ações Curriculares de Extensão II</p>
+  <h1>Por que um contador precisa entender de <em>cultura</em>?</h1>
+  <p class="hero-sub">Um coletivo de dança aprova R$ 40 mil num edital e perde tudo porque emitiu a nota fiscal na data errada. Uma mestra do capim dourado vende para fora do país sem CNPJ. Um bloco de carnaval não consegue abrir conta bancária. Nenhum desses problemas é artístico. Todos são contábeis e jurídicos. É aqui que você entra.</p>
+  <dl class="hero-meta">
+    <div><dt>Carga horária de extensão</dt><dd>60 horas · 4 créditos</dd></div>
+    <div><dt>Semestre</dt><dd>2026.2 · Obrigatória</dd></div>
+    <div><dt>Professor</dt><dd>Dr. André Demetrio</dd></div>
+    <div><dt>Projeto de extensão</dt><dd>Cultura, gestão e direito em ação</dd></div>
+  </dl>
+</div>
+
+<!-- ============ BLOCO 1 ============ -->
+<section id="b1">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="acct">1.1</span>
+      <h2>Isto é setor cultural?</h2>
+      <span class="tempo">25 min · em duplas</span>
+    </div>
+    <p class="lede">Antes de qualquer lei, uma pergunta de classificação. Decida em dupla, sem consultar nada, se cada item abaixo pertence ao setor cultural. Depois de responder, o cartão mostra <strong>como a plataforma nacional Mapa da Cultura efetivamente classifica</strong> aquilo. A plataforma tem mais de cinquenta áreas de atuação cadastráveis, e algumas delas vão surpreender.</p>
+
+    <div class="panel">
+      <div class="stamp" id="stamp1">Conferido</div>
+      <div id="tri"></div>
+      <p class="score" id="score1" hidden></p>
+    </div>
+
+    <div class="panel">
+      <span class="label">Fechamento do bloco · anote no caderno</span>
+      <p style="margin:0; font-size:.97rem">Se o setor cultural inclui gastronomia, moda, jogos eletrônicos, esporte, artesanato e gestão cultural, então ele não é um nicho de artista. É um <strong>conjunto de organizações reais</strong>, com CNPJ ou sem, com regime tributário, obrigação acessória e necessidade de prestar contas. Quem cuida disso na prática?</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BLOCO 2 ============ -->
+<section id="b2">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="acct">1.2</span>
+      <h2>Quatro situações em que o dinheiro da cultura desaparece</h2>
+      <span class="tempo">30 min · discussão aberta</span>
+    </div>
+    <p class="lede">Nenhum dos quatro casos abaixo é sobre talento artístico. Todos são sobre <strong>falha formal</strong>. Escolha a alternativa que você defenderia se fosse o contador do projeto. Não existe pegadinha: existe consequência financeira.</p>
+    <div class="grid2" id="casos"></div>
+    <div class="panel" style="margin-top:16px">
+      <div class="stamp" id="stamp2">Conferido</div>
+      <span class="label">O fio condutor da disciplina</span>
+      <p style="margin:0; font-size:.97rem">O profissional da contabilidade é <strong>agente central da sustentabilidade financeira</strong> dos fazedores de cultura. É quem viabiliza a formalização do microempreendedor cultural, quem organiza a prestação de contas de um edital e quem evita que um coletivo devolva recurso público por erro de forma. Isso não é papel acessório. É a diferença entre o projeto existir e não existir.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BLOCO 3 ============ -->
+<section id="b3">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="acct">1.3</span>
+      <h2>Quanto sobra para o artista?</h2>
+      <span class="tempo">25 min · simulação</span>
+    </div>
+    <p class="lede">Um grupo de teatro de Palmas é contratado para uma apresentação. O contrato diz um número. O que chega na mão de cada pessoa é outro. Mexa nos campos e observe o que acontece com o <strong>valor por hora de trabalho</strong> quando os custos e as retenções entram na conta. Todos os percentuais são editáveis de propósito: nesta aula eles são hipótese de trabalho, não parecer tributário.</p>
+
+    <div class="panel">
+      <div class="stamp" id="stamp3">Conferido</div>
+      <div class="calc-grid">
+        <div><span class="label">Cachê contratado (R$)</span><input type="number" id="c_bruto" value="6000" min="0" step="100"></div>
+        <div><span class="label">Custos diretos (R$)</span><input type="number" id="c_custo" value="1400" min="0" step="50"></div>
+        <div><span class="label">Retenções e tributos (%)</span><input type="number" id="c_ret" value="18" min="0" max="60" step="0.5"></div>
+        <div><span class="label">Pessoas na equipe</span><input type="number" id="c_pes" value="7" min="1" step="1"></div>
+        <div><span class="label">Horas totais do grupo</span><input type="number" id="c_hora" value="180" min="1" step="5"></div>
+        <div><span class="label">Valor-hora de referência (R$)</span><input type="number" id="c_ref" value="12" min="0" step="0.5"></div>
+      </div>
+      <dl class="out">
+        <div><dt>Sobra para dividir</dt><dd id="o_liq">—</dd></div>
+        <div><dt>Por pessoa</dt><dd id="o_pes">—</dd></div>
+        <div><dt>Por hora trabalhada</dt><dd id="o_hr">—</dd></div>
+        <div><dt>Comparação</dt><dd id="o_cmp">—</dd></div>
+      </dl>
+      <p class="warn" id="c_msg"></p>
+    </div>
+
+    <div class="panel">
+      <span class="label">Perguntas para levar ao grupo</span>
+      <p style="margin:0 0 8px; font-size:.96rem">Custos diretos incluem o quê, exatamente? Transporte, cenário, figurino, ensaio, aluguel de sala, alimentação da equipe. Quem calcula isso hoje para o grupo?</p>
+      <p style="margin:0 0 8px; font-size:.96rem">As horas de ensaio contam como trabalho? Se não contarem, o valor-hora que aparece na tela é fictício.</p>
+      <p style="margin:0; font-size:.96rem">Se o mesmo cachê fosse recebido por pessoa física sem CNPJ, por MEI ou por uma associação, a sobra seria a mesma? Guardem a pergunta: ela volta na Unidade 2.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BLOCO 4 ============ -->
+<section id="b4">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="acct">2.1</span>
+      <h2>Garimpo no Mapa da Cultura</h2>
+      <span class="tempo">30 min · individual · vale nota</span>
+    </div>
+    <p class="lede">Atividade individual da <strong>Etapa 1</strong>, peso 5%, com postagem no Fórum do AVA até <strong>29/08/2026</strong>. Abra o <a href="https://mapa.cultura.gov.br/" target="_blank" rel="noopener">mapa.cultura.gov.br</a>, encontre um agente ou espaço cultural de Palmas ou do seu município de origem e preencha a ficha abaixo. O formulário monta o texto pronto para você copiar e colar no Fórum.</p>
+
+    <div class="panel">
+      <div class="stamp" id="stamp4">Conferido</div>
+      <div class="grid2">
+        <div>
+          <div class="field"><span class="label">Seu nome</span><input type="text" id="g_nome" placeholder="Nome completo"></div>
+          <div class="field"><span class="label">Agente ou espaço cultural</span><input type="text" id="g_ag" placeholder="Como aparece no Mapa da Cultura"></div>
+          <div class="field"><span class="label">Município / UF</span><input type="text" id="g_mun" placeholder="Palmas/TO"></div>
+          <div class="field"><span class="label">Área de atuação (conforme o Mapa)</span>
+            <select id="g_area"></select>
+          </div>
+          <div class="field"><span class="label">Link do perfil no Mapa</span><input type="text" id="g_link" placeholder="https://mapa.cultura.gov.br/..."></div>
+        </div>
+        <div>
+          <div class="field"><span class="label">Tem CNPJ?</span>
+            <select id="g_cnpj">
+              <option>Sim, localizei o CNPJ</option>
+              <option>Não tem CNPJ</option>
+              <option selected>Não consegui identificar</option>
+            </select>
+          </div>
+          <div class="field"><span class="label">Hipótese de enquadramento</span>
+            <select id="g_enq">
+              <option>Microempreendedor individual (MEI)</option>
+              <option>Empresário individual</option>
+              <option>Sociedade limitada unipessoal (SLU)</option>
+              <option>Sociedade empresária</option>
+              <option>Associação sem fins lucrativos</option>
+              <option>Cooperativa</option>
+              <option>Coletivo sem personalidade jurídica</option>
+              <option selected>Não identificado</option>
+            </select>
+          </div>
+          <div class="field"><span class="label">Como se sustenta (marque o que observar)</span>
+            <div class="checks" id="g_sust"></div>
+          </div>
+        </div>
+      </div>
+      <div class="field" style="margin-top:16px">
+        <span class="label">Sua hipótese inicial sobre a situação formal e financeira (3 a 5 linhas)</span>
+        <textarea id="g_hip" rows="4" placeholder="O que te faz pensar que este agente é formalizado ou não? Que indício você usou? Que problema contábil ou jurídico você imagina que ele enfrenta?"></textarea>
+      </div>
+      <button class="btn" id="g_ger">Montar a ficha</button>
+      <button class="btn-ghost" id="g_cop" style="margin-left:8px">Copiar para o Fórum</button>
+      <span class="copy-ok" id="g_ok"></span>
+      <div style="margin-top:18px"><pre class="ficha" id="g_out">Preencha os campos e clique em “Montar a ficha”.</pre></div>
+      <p class="warn">Use apenas os dados públicos disponíveis na plataforma. Qualquer contato direto, uso de imagem ou coleta de informação pessoal exige autorização expressa, conforme a LGPD (Lei nº 13.709/2018).</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BLOCO 5 ============ -->
+<section id="b5">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="acct">2.2</span>
+      <h2>Escolha o seu eixo e o seu produto</h2>
+      <span class="tempo">35 min · formação dos grupos</span>
+    </div>
+    <p class="lede">São dezoito eixos temáticos. Cada grupo escolhe <strong>um eixo</strong> e desenvolve <strong>um produto extensionista</strong> correspondente, articulado a um agente cultural real. A leitura indicada não é sugestão: é o ponto de partida teórico que impede o produto de virar reprodução de informação genérica. Filtre, leia e conversem.</p>
+
+    <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:16px">
+      <button class="chip" data-f="all" aria-pressed="true">Todos os 18</button>
+      <button class="chip" data-f="1" aria-pressed="false">Unidade 1 · Cultura, direito e saberes situados</button>
+      <button class="chip" data-f="2" aria-pressed="false">Unidade 2 · Tributação e contabilidade</button>
+      <input type="text" id="e_busca" placeholder="buscar: MEI, Rouanet, direito autoral..." style="max-width:280px">
+    </div>
+    <div class="eixo-list" id="eixos"></div>
+
+    <div class="panel" style="margin-top:20px">
+      <div class="stamp" id="stamp5">Conferido</div>
+      <span class="label">Formalização da escolha</span>
+      <p style="margin:0 0 12px; font-size:.96rem">A escolha do eixo e do produto se formaliza em formulário próprio, preenchido por <strong>um único integrante</strong> do grupo. A ficha de diagnóstico da Etapa 1 vale 10% e vence em 29/08/2026.</p>
+      <p style="margin:0"><a href="https://docs.google.com/forms/d/e/1FAIpQLSeXtOuBy5ACHu7Xzx6gRiVQxUuwkJh1xQJ49R4V8NwnTzyW7Q/viewform?usp=header" target="_blank" rel="noopener">Formulário de escolha do eixo temático e do produto</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BLOCO 6 ============ -->
+<section id="b6">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="acct">3.1</span>
+      <h2>A rota do semestre</h2>
+      <span class="tempo">15 min</span>
+    </div>
+    <p class="lede">A avaliação é processual e distribuída em quatro etapas, justamente para que o trabalho não se acumule em novembro. Os pesos:</p>
+
+    <div class="bar" aria-label="Distribuição dos pesos das quatro etapas">
+      <span style="width:15%; background:var(--gold)">15%</span>
+      <span style="width:20%; background:var(--green)">20%</span>
+      <span style="width:20%; background:var(--rule-strong); color:var(--ink)">20%</span>
+      <span style="width:45%; background:var(--clay)">45%</span>
+    </div>
+    <p class="mono" style="font-size:11.5px; letter-spacing:.06em; color:var(--ink-2); margin:0 0 30px">
+      ETAPA 1 diagnóstico · ETAPA 2 projeto · ETAPA 3 checkpoint · ETAPA 4 produto final
+    </p>
+
+    <div class="grid2">
+      <div class="panel">
+        <span class="label">Calendário dos encontros</span>
+        <ul class="tl" id="tl"></ul>
+      </div>
+      <div>
+        <div class="panel">
+          <span class="label">Etapa 1 · até 29/08 · peso 15%</span>
+          <p style="margin:0; font-size:.95rem">Duas atividades. O <strong>Garimpo no Mapa da Cultura</strong> é individual, no Fórum, peso 5%. A <strong>ficha de diagnóstico</strong> do grupo é formulário com PDF anexo, postado por um só integrante, peso 10%.</p>
+        </div>
+        <div class="panel">
+          <span class="label">Etapa 2 · até 26/09 · peso 20%</span>
+          <p style="margin:0; font-size:.95rem">Projeto do grupo em documento-modelo: identificação e eixo, agente cultural e sua situação formal, produto e a lacuna contábil ou jurídica que enfrenta, referencial inicial e cronograma.</p>
+        </div>
+        <div class="panel">
+          <span class="label">Etapa 3 · até 31/10 · peso 20%</span>
+          <p style="margin:0; font-size:.95rem">Checkpoint em encontro síncrono. Documento de uma página com três campos: o que já foi produzido, o que falta, e a principal dificuldade do grupo. Retorno oral imediato.</p>
+        </div>
+        <div class="panel">
+          <span class="label">Etapa 4 · 14/11 até 12h · peso 45%</span>
+          <p style="margin:0; font-size:.95rem">Dois arquivos: o produto extensionista e o relatório de comprovação em PDF, de duas a quatro páginas, com registro fotográfico e datas do contato com a comunidade.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ VÍDEOS ============ -->
+<section id="videos">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="acct">4.1</span>
+      <h2>Para assistir com a turma e depois da aula</h2>
+      <span class="tempo">seleção comentada</span>
+    </div>
+    <p class="lede">Sugestão de uso em sala: o tutorial do Mapa da Cultura antes do Bloco 4, e um trecho de Célio Turino no fechamento, em diálogo direto com a leitura de hoje. Os demais ficam como aprofundamento assíncrono.</p>
+    <div class="grid2">
+
+      <article class="vid">
+        <div class="frame"><iframe loading="lazy" src="https://www.youtube-nocookie.com/embed/00m6rn5xwj0" title="Conhecendo o Mapa da Cultura e criando um cadastro" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
+        <div class="meta">
+          <span class="src">Usar antes do Bloco 4</span>
+          <h4>Conhecendo o Mapa da Cultura e criando um cadastro</h4>
+          <p>Percorre a plataforma que estrutura toda a disciplina: perfil de agente, espaços, editais. É o passo prático do Garimpo. <a href="https://www.youtube.com/watch?v=00m6rn5xwj0" target="_blank" rel="noopener">Abrir no YouTube</a></p>
+        </div>
+      </article>
+
+      <article class="vid">
+        <div class="frame"><iframe loading="lazy" src="https://www.youtube-nocookie.com/embed/q-SQgNnL52A" title="Pontos de Cultura e os conceitos da Cultura Viva, com Célio Turino" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
+        <div class="meta">
+          <span class="src">Diálogo com a leitura de hoje</span>
+          <h4>Pontos de Cultura e os conceitos da Cultura Viva · Célio Turino</h4>
+          <p>Videopalestra do formulador do programa Cultura Viva. Assista pensando na pergunta: quanto custa um Ponto de Cultura e quem faz essa conta? <a href="https://www.youtube.com/watch?v=q-SQgNnL52A" target="_blank" rel="noopener">Abrir no YouTube</a></p>
+        </div>
+      </article>
+
+      <article class="vid">
+        <div class="frame"><iframe loading="lazy" src="https://www.youtube-nocookie.com/embed/W-C0l9gDCLQ" title="Célio Turino: a cultura como ferramenta de transformação social" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
+        <div class="meta">
+          <span class="src">Aprofundamento assíncrono</span>
+          <h4>A cultura como ferramenta de transformação social · Célio Turino</h4>
+          <p>Entrevista longa, de 2026, sobre a política de descentralização cultural. Boa base para os eixos de economia solidária e contabilidade popular. <a href="https://www.youtube.com/watch?v=W-C0l9gDCLQ" target="_blank" rel="noopener">Abrir no YouTube</a></p>
+        </div>
+      </article>
+
+      <article class="vid">
+        <div class="frame"><iframe loading="lazy" src="https://www.youtube-nocookie.com/embed/7SyEBYnGBT4" title="Prestação de contas para projetos culturais" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
+        <div class="meta">
+          <span class="src">Prévia da Unidade 2</span>
+          <h4>Prestação de contas para projetos culturais</h4>
+          <p>Tutorial de secretaria estadual de cultura sobre a etapa obrigatória de muitos editais. É literalmente serviço contábil. <a href="https://www.youtube.com/watch?v=7SyEBYnGBT4" target="_blank" rel="noopener">Abrir no YouTube</a></p>
+        </div>
+      </article>
+
+    </div>
+    <p class="warn" style="margin-top:20px">Se algum vídeo não carregar dentro desta página por restrição do navegador, use o link “Abrir no YouTube”.</p>
+  </div>
+</section>
+
+<!-- ============ LEITURAS E COMBINADOS ============ -->
+<section id="combinados">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="acct">5.1</span>
+      <h2>Leituras de hoje e combinados</h2>
+    </div>
+    <div class="grid2">
+      <div class="panel">
+        <span class="label">Leitura para este encontro</span>
+        <p style="font-size:.95rem; margin:0 0 12px">TURINO, Célio. <strong>Por todos os caminhos</strong>: pontos de cultura na América Latina. São Paulo: Sesc, 2020. Ler <em>Encruzilhada civilizatória: ventos de esperança</em>, p. 6-7, e a <em>Introdução</em>, p. 11.</p>
+        <p style="font-size:.95rem; margin:0">RIBEIRO, Darcy. <strong>A universidade necessária</strong>. Rio de Janeiro: Paz e Terra, 1969.</p>
+      </div>
+      <div class="panel">
+        <span class="label">Próximo encontro · 22/08</span>
+        <p style="font-size:.95rem; margin:0 0 12px">Para que serve a contabilidade e para quem ela foi criada? Colonialidade do saber contábil. Cultura indígena, quilombola e do cerrado como economia. Abertura do Garimpo no Fórum.</p>
+        <p style="font-size:.95rem; margin:0">SAUERBRONN, Fernanda et al. Decolonial studies in accounting? <strong>Critical Perspectives on Accounting</strong>, v. 99, 2021.</p>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:16px">
+      <span class="label">Nomenclatura obrigatória dos arquivos no AVA</span>
+      <p class="mono" style="font-size:1rem; margin:0 0 8px; color:var(--clay); font-weight:600">ACE2_ETAPA[número]_[NomeDoGrupo]_2026</p>
+      <p style="margin:0; font-size:.93rem; color:var(--ink-2)">Sem espaços, sem acentos, sem caracteres especiais. A extensão acompanha o formato entregue: .pdf, .mp3, .mp4, .zip. Arquivo acima do limite do AVA vai para o Google Drive institucional, com o mesmo padrão de nome e link público postado na tarefa.</p>
+    </div>
+
+    <div class="rules" style="margin-top:24px">
+      <div><b>75%</b><p><strong>Frequência mínima.</strong> Para obter os créditos nas ACEs é necessária frequência de 75% e aproveitamento considerado apto, conforme o art. 8º, § 3º, da Resolução nº 14/2020 da UFT. Não há abono de faltas, salvo nos casos previstos em lei.</p></div>
+      <div><b>Gravação</b><p>É vedado gravar ou filmar as aulas sem autorização expressa do professor.</p></div>
+      <div><b>Mentoria</b><p>Atendimento técnico aos grupos por agendamento. <a href="https://forms.gle/4CnemeMftC4G8diK8" target="_blank" rel="noopener">Formulário de agendamento de mentoria</a>. Também há atendimento ao final dos encontros, mediante solicitação.</p></div>
+      <div><b>Acessibilidade</b><p>Formulário confidencial para demandas pedagógicas específicas relacionadas a deficiência, transtornos de aprendizagem, condições de saúde ou perfis neurodivergentes. Preenchimento voluntário. <a href="https://forms.gle/Qhqps54k8vgvFkSR8" target="_blank" rel="noopener">Abrir formulário</a>. Você também pode falar diretamente com o professor, de forma reservada, a qualquer momento.</p></div>
+      <div><b>LGPD</b><p>O uso de informações e imagens de agentes culturais exige autorização, nos termos da Lei nº 13.709/2018. Na dúvida, pergunte antes de publicar.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SAÍDA ============ -->
+<section id="saida">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="acct">5.2</span>
+      <h2>Bilhete de saída</h2>
+      <span class="tempo">5 min</span>
+    </div>
+    <p class="lede">Complete a frase em uma linha e leia em voz alta para a turma. É o registro de onde cada um começou.</p>
+    <div class="panel">
+      <p style="font-family:var(--display); font-size:1.28rem; font-weight:600; margin:0 0 14px; line-height:1.35">“Como contador ou contadora em formação, eu posso ajudar a cultura de Palmas a…”</p>
+      <input type="text" id="saida_in" placeholder="continue a frase aqui" style="font-family:var(--body); font-size:1.02rem">
+      <button class="btn" id="saida_btn" style="margin-top:14px">Registrar</button>
+      <span class="copy-ok" id="saida_ok"></span>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <h4>Disciplina</h4>
+      <p>Ações Curriculares de Extensão II — Programas e Projetos</p>
+      <p>Código 5CON5038 · 4 créditos · 60h de extensão · obrigatória</p>
+      <p>Bacharelado em Ciências Contábeis · Câmpus de Palmas</p>
+    </div>
+    <div>
+      <h4>Professor</h4>
+      <p>Prof. Dr. André Demetrio</p>
+      <p><a href="mailto:demetrio@uft.edu.br">demetrio@uft.edu.br</a></p>
+      <p>Atendimento por agendamento via e-mail institucional</p>
+    </div>
+    <div>
+      <h4>Plataformas</h4>
+      <ul>
+        <li><a href="https://mapa.cultura.gov.br/" target="_blank" rel="noopener">Mapa da Cultura</a></li>
+        <li><a href="https://aplicacoes.cultura.gov.br/comparar/salicnet/" target="_blank" rel="noopener">SALIC Comparar</a></li>
+        <li><a href="https://forms.gle/4CnemeMftC4G8diK8" target="_blank" rel="noopener">Agendamento de mentoria</a></li>
+        <li><a href="https://forms.gle/Qhqps54k8vgvFkSR8" target="_blank" rel="noopener">Acessibilidade e acompanhamento</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Projeto de extensão</h4>
+      <p>Cultura, gestão e direito em ação: capacitação interdisciplinar para a sustentabilidade financeira no setor cultural de Palmas (TO)</p>
+      <p>Alinhado ao PPC de Ciências Contábeis, Resolução CONSEPE nº 71/2022</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ============================================================
+   Estado apenas em memória. Nada é gravado no navegador.
+   ============================================================ */
+const done = new Set();
+function marcar(bloco, stampId){
+  if(done.has(bloco)) return;
+  done.add(bloco);
+  const s = document.getElementById(stampId);
+  if(s) s.classList.add('on');
+  const link = document.querySelector('#nav a[data-b="'+bloco+'"]');
+  if(link) link.classList.add('done');
+}
+const brl = n => n.toLocaleString('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:2});
+
+/* ---------- BLOCO 1: triagem ---------- */
+const TRI = [
+  {q:"Grupo que produz peças de capim dourado no Jalapão e vende em feira", r:"sim", area:"Artesanato · Patrimônio Imaterial",
+   why:"Artesanato é área de atuação cadastrável e a técnica do capim dourado envolve saber tradicional. O agente pode ser individual, coletivo ou associação. Cada forma tem consequência tributária distinta."},
+  {q:"Estúdio de três pessoas que desenvolve um jogo para celular", r:"sim", area:"Jogos Eletrônicos · Economia Criativa",
+   why:"Jogos eletrônicos está na lista de áreas do Mapa da Cultura e no recorte da economia criativa do Ministério da Cultura. Aqui o problema contábil é ativo intangível e direito autoral."},
+  {q:"Time de futebol amador que organiza campeonato no bairro", r:"depende", area:"Esporte",
+   why:"Surpresa: esporte consta entre as áreas de atuação da plataforma. A atividade em si pode não ser objeto de fomento cultural, mas o agente pode se cadastrar. A fronteira é jurídica, não intuitiva."},
+  {q:"Restaurante que trabalha com culinária tradicional do Tocantins", r:"sim", area:"Gastronomia",
+   why:"Gastronomia é área cadastrável e integra o setor criativo. Um restaurante que sistematiza receita tradicional pode ser tanto empresa quanto detentor de referência cultural registrada."},
+  {q:"Costureira que faz figurino para o bloco de carnaval", r:"sim", area:"Moda · Cultura Popular",
+   why:"Moda também está na lista. Note o encadeamento: ela normalmente é prestadora sem nota, contratada por um coletivo sem CNPJ, com dinheiro de edital público. Três problemas contábeis numa frase."},
+  {q:"Coral que ensaia semanalmente e se apresenta em eventos da cidade", r:"sim", area:"Música",
+   why:"Música é área central. A pergunta prática é outra: quem recebe o cachê, como se divide entre integrantes e o que incide sobre cada rateio."},
+  {q:"Perfil de humor no Instagram com quarenta mil seguidores em Palmas", r:"sim", area:"Mídias Sociais · Comunicação",
+   why:"Mídias sociais e comunicação são áreas cadastráveis. Renda de publicidade e monetização de plataforma têm regime próprio, e quase nunca há orientação contábil."},
+  {q:"Pesquisadora que registra a memória oral dos moradores de Taquaruçu", r:"sim", area:"Pesquisa · Patrimônio Imaterial",
+   why:"Pesquisa e patrimônio imaterial constam na plataforma. Registro de saber tradicional levanta a questão de titularidade coletiva, que é um dos eixos da disciplina."},
+  {q:"Loja que revende instrumentos musicais importados", r:"depende", area:"Cadeia produtiva, não agente artístico",
+   why:"O comércio integra a cadeia produtiva da música, mas não é agente cultural criador. A distinção importa: define quem pode ser proponente de edital e quem não pode."},
+  {q:"Escritório de contabilidade que atende produtores culturais da cidade", r:"sim", area:"Gestão Cultural",
+   why:"Gestão cultural é área de atuação do Mapa da Cultura. Ou seja: quando você atender um agente cultural, você não estará olhando o setor de fora. Você já é parte dele."}
+];
+const ROTULO = {sim:"É setor cultural", nao:"Não é", depende:"Depende"};
+(function(){
+  const box = document.getElementById('tri');
+  TRI.forEach((it,i)=>{
+    const el = document.createElement('div');
+    el.className = 'tri-item';
+    el.innerHTML =
+      '<div class="tri-q">'+it.q+'</div>'+
+      '<div class="tri-opts">'+
+        ['sim','nao','depende'].map(k=>'<button data-k="'+k+'" data-i="'+i+'">'+ROTULO[k]+'</button>').join('')+
+      '</div>'+
+      '<div class="tri-reveal" id="tr'+i+'"><span class="tag">'+it.area+'</span>'+it.why+'</div>';
+    box.appendChild(el);
+  });
+  let respondidas = 0, acertos = 0;
+  box.addEventListener('click', e=>{
+    const b = e.target.closest('button[data-k]');
+    if(!b) return;
+    const i = +b.dataset.i, it = TRI[i];
+    const grupo = b.parentElement;
+    if(grupo.dataset.feito) return;
+    grupo.dataset.feito = '1';
+    grupo.querySelectorAll('button').forEach(x=>{ if(x!==b) x.style.opacity=.45; });
+    b.classList.add('sel');
+    document.getElementById('tr'+i).classList.add('on');
+    respondidas++;
+    if(b.dataset.k === it.r) acertos++;
+    const sc = document.getElementById('score1');
+    sc.hidden = false;
+    sc.textContent = 'Respondidas: '+respondidas+' de '+TRI.length+' · alinhadas à classificação da plataforma: '+acertos;
+    if(respondidas === TRI.length){
+      marcar('b1','stamp1');
+      sc.textContent += ' — a lista de áreas do Mapa da Cultura tem mais de cinquenta entradas. Culpa não é de quem errou.';
+    }
+  });
+})();
+
+/* ---------- BLOCO 2: casos ---------- */
+const CASOS = [
+  {
+    t:"Caso 1 · A conta bancária",
+    s:"Um coletivo de dança sem CNPJ é contemplado em edital municipal de R$ 30.000. Para receber, indica a conta corrente pessoal da presidenta do grupo.",
+    o:[
+      {x:"Não há problema: o recurso é do grupo e será usado no projeto de qualquer forma.", ok:false,
+       f:"O uso da conta pessoal mistura patrimônio, elimina a rastreabilidade e transforma o repasse em movimentação tributável da pessoa física. Além do risco de glosa, há efeito no imposto de renda dela."},
+      {x:"O recurso deve transitar por conta específica vinculada ao projeto, com movimentação rastreável e conciliação por item do plano de trabalho.", ok:true,
+       f:"Correto. Conta específica é o que permite conciliar cada despesa com o orçamento aprovado. Sem isso, a prestação de contas fica indefensável, mesmo com o projeto integralmente executado."},
+      {x:"Basta guardar todos os recibos e apresentar no final.", ok:false,
+       f:"Recibo comprova pagamento, não comprova a origem e a segregação do recurso público. A análise cruza extrato, orçamento aprovado e documento fiscal."}
+    ]
+  },
+  {
+    t:"Caso 2 · O teto do MEI",
+    s:"Um artista atua como MEI. Em setembro, uma sequência de contratos faz o faturamento se aproximar do teto anual da modalidade. Ele quer aceitar mais dois shows em novembro.",
+    o:[
+      {x:"Aceitar tudo: o excesso se resolve na declaração do ano seguinte.", ok:false,
+       f:"O excesso de receita tem consequência definida em lei, que pode incluir desenquadramento retroativo e recolhimento pelas regras do Simples Nacional sobre o período. O custo aparece depois, e maior."},
+      {x:"Alguém precisa monitorar o faturamento acumulado mês a mês e simular o desenquadramento antes de assinar o próximo contrato.", ok:true,
+       f:"Exato, e esse alguém é você. A decisão é de negócio, não de arte: pode ser mais vantajoso migrar de regime do que recusar contrato. Sem simulação, ele decide no escuro. Verificaremos os dispositivos da LC nº 123/2006 na Unidade 2."},
+      {x:"Recusar os shows para não perder o MEI.", ok:false,
+       f:"Recusar receita por medo do regime tributário é sintoma de ausência de assessoria, não de prudência. A alternativa correta é comparar cenários antes de decidir."}
+    ]
+  },
+  {
+    t:"Caso 3 · O cachê da prefeitura",
+    s:"Uma cantora sem CNPJ recebe R$ 5.000 de cachê pago por órgão público municipal. Ela pergunta por que o depósito veio menor que o contrato.",
+    o:[
+      {x:"Houve erro da prefeitura e ela deve pedir a diferença.", ok:false,
+       f:"Provavelmente não houve erro. Pagamento a pessoa física por serviço sofre retenções na fonte, cuja natureza e alíquota variam conforme o tributo e a legislação do município."},
+      {x:"O contrato é bruto. Sobre pagamento a pessoa física incidem retenções na fonte, e a comparação entre atuar como pessoa física ou como pessoa jurídica precisa ser calculada.", ok:true,
+       f:"Correto. E aqui está o ponto político da disciplina: quem tem contador compara cenários e escolhe. Quem não tem apenas recebe menos e não entende por quê."},
+      {x:"Ela deveria ter emitido nota fiscal.", ok:false,
+       f:"Sem CNPJ ela não emite nota fiscal de serviço. O instrumento usual é outro, e a escolha entre permanecer pessoa física ou se formalizar depende de cálculo, não de hábito."}
+    ]
+  },
+  {
+    t:"Caso 4 · A nota fiscal fora da vigência",
+    s:"Na prestação de contas de um projeto, três notas fiscais relevantes têm data anterior à assinatura do termo de execução cultural. O serviço foi realmente prestado.",
+    o:[
+      {x:"Como o serviço existiu, a despesa será aceita.", ok:false,
+       f:"A execução real não supre o requisito temporal. Despesa fora da vigência costuma ser glosada, com devolução do valor corrigido, ainda que o projeto tenha sido integralmente realizado."},
+      {x:"O grupo deve estar preparado para glosa e devolução do valor corrigido, e o erro se previne no planejamento, não na entrega.", ok:true,
+       f:"Correto. É por isso que a prestação de contas começa no desenho do projeto, e não depois do evento. Quem entra só no final chega tarde."},
+      {x:"Basta refazer as notas com data nova.", ok:false,
+       f:"Isso configura irregularidade grave, com repercussão para o agente cultural e para quem orientou. A resposta técnica é declarar, justificar e, se necessário, devolver."}
+    ]
+  }
+];
+(function(){
+  const box = document.getElementById('casos');
+  let resolvidos = 0;
+  CASOS.forEach((c,ci)=>{
+    const el = document.createElement('div');
+    el.className = 'panel caso';
+    el.innerHTML = '<h3>'+c.t+'</h3><p class="sit">'+c.s+'</p>'+
+      c.o.map((o,oi)=>'<button class="opt" data-c="'+ci+'" data-o="'+oi+'">'+o.x+'</button><div class="fb" id="fb'+ci+'-'+oi+'">'+o.f+'</div>').join('');
+    box.appendChild(el);
+  });
+  box.addEventListener('click', e=>{
+    const b = e.target.closest('button.opt');
+    if(!b) return;
+    const ci = +b.dataset.c, oi = +b.dataset.o;
+    const card = b.closest('.caso');
+    if(card.dataset.feito) return;
+    card.dataset.feito = '1';
+    const opt = CASOS[ci].o[oi];
+    b.classList.add(opt.ok ? 'ok' : 'no');
+    document.getElementById('fb'+ci+'-'+oi).classList.add('on');
+    if(!opt.ok){
+      const certo = CASOS[ci].o.findIndex(o=>o.ok);
+      const bc = card.querySelector('button[data-o="'+certo+'"]');
+      bc.classList.add('ok');
+      document.getElementById('fb'+ci+'-'+certo).classList.add('on');
+    }
+    resolvidos++;
+    if(resolvidos === CASOS.length) marcar('b2','stamp2');
+  });
+})();
+
+/* ---------- BLOCO 3: calculadora ---------- */
+(function(){
+  const ids = ['c_bruto','c_custo','c_ret','c_pes','c_hora','c_ref'];
+  const el = {}; ids.forEach(i=>el[i]=document.getElementById(i));
+  function calc(){
+    const bruto = +el.c_bruto.value || 0;
+    const custo = +el.c_custo.value || 0;
+    const ret   = +el.c_ret.value || 0;
+    const pes   = Math.max(1, +el.c_pes.value || 1);
+    const hora  = Math.max(1, +el.c_hora.value || 1);
+    const ref   = +el.c_ref.value || 0;
+
+    const retVal = bruto * ret / 100;
+    const liq = bruto - retVal - custo;
+    const porPes = liq / pes;
+    const porHora = liq / hora;
+
+    document.getElementById('o_liq').innerHTML = brl(liq) + '<small> de ' + brl(bruto) + '</small>';
+    document.getElementById('o_pes').textContent = brl(porPes);
+    document.getElementById('o_hr').textContent = brl(porHora);
+
+    const cmp = document.getElementById('o_cmp');
+    if(ref > 0){
+      const p = (porHora / ref) * 100;
+      cmp.innerHTML = Math.round(p) + '%<small> do valor-hora de referência</small>';
+    } else cmp.textContent = '—';
+
+    const msg = document.getElementById('c_msg');
+    if(liq <= 0){
+      msg.textContent = 'Com estes números o grupo trabalha no prejuízo. Isso não é hipótese improvável: é rotina de quem precifica sem memória de cálculo.';
+    } else if(ref > 0 && porHora < ref){
+      msg.textContent = 'O valor por hora ficou abaixo da referência. A pergunta para o grupo é onde essa diferença está sendo absorvida: em trabalho não remunerado, em custo não declarado ou em ensaio que ninguém contou como jornada.';
+    } else {
+      msg.textContent = 'Retenções e custos foram estimados por vocês, para debate em sala. As alíquotas efetivas dependem do regime, do tributo e do município, e serão verificadas na Unidade 2.';
+    }
+  }
+  ids.forEach(i=>el[i].addEventListener('input', ()=>{ calc(); marcar('b3','stamp3'); }));
+  calc();
+})();
+
+/* ---------- BLOCO 4: ficha do garimpo ---------- */
+const AREAS = ["Antropologia","Arqueologia","Arquitetura e Urbanismo","Arquivo","Arte Digital","Arte de Rua","Artes Circenses","Artes Visuais","Artesanato","Audiovisual","Cinema","Circo","Comunicação","Cultura Cigana","Cultura Digital","Cultura Estrangeira","Cultura Indígena","Cultura LGBT","Cultura Negra","Cultura Popular","Dança","Design","Direito Autoral","Economia Criativa","Educação","Esporte","Filosofia","Fotografia","Gastronomia","Gestão Cultural","História","Jogos Eletrônicos","Jornalismo","Leitura","Literatura","Livro","Meio Ambiente","Moda","Museu","Mídias Sociais","Música","Novas Mídias","Patrimônio Cultural","Patrimônio Imaterial","Patrimônio Material","Pesquisa","Produção Cultural","Rádio","Sociologia","Teatro","Televisão","Turismo","Ópera","Outros"];
+const SUST = ["Edital ou fomento público","Bilheteria ou venda de ingresso","Venda direta de produto","Patrocínio privado","Doação ou vaquinha","Trabalho voluntário dos integrantes","Outra renda dos integrantes","Cessão gratuita de espaço","Não consegui identificar"];
+(function(){
+  const sel = document.getElementById('g_area');
+  sel.innerHTML = '<option value="">selecione a área</option>' + AREAS.map(a=>'<option>'+a+'</option>').join('');
+  const cb = document.getElementById('g_sust');
+  cb.innerHTML = SUST.map((s,i)=>'<label><input type="checkbox" value="'+s+'"> <span>'+s+'</span></label>').join('');
+
+  function montar(){
+    const v = id => (document.getElementById(id).value || '').trim();
+    const marc = [...cb.querySelectorAll('input:checked')].map(x=>x.value);
+    const txt =
+'GARIMPO NO MAPA DA CULTURA — ACE II 2026.2\n'+
+'------------------------------------------\n'+
+'Estudante: '+(v('g_nome') || '[preencher]')+'\n'+
+'Agente ou espaço cultural: '+(v('g_ag') || '[preencher]')+'\n'+
+'Município/UF: '+(v('g_mun') || '[preencher]')+'\n'+
+'Área de atuação: '+(v('g_area') || '[preencher]')+'\n'+
+'Perfil no Mapa da Cultura: '+(v('g_link') || '[preencher]')+'\n\n'+
+'SITUAÇÃO FORMAL\n'+
+'CNPJ: '+v('g_cnpj')+'\n'+
+'Hipótese de enquadramento: '+v('g_enq')+'\n\n'+
+'FORMAS DE SUSTENTAÇÃO OBSERVADAS\n'+
+(marc.length ? marc.map(m=>'- '+m).join('\n') : '- [marcar ao menos uma]')+'\n\n'+
+'HIPÓTESE INICIAL\n'+
+(v('g_hip') || '[escrever de 3 a 5 linhas]')+'\n\n'+
+'Observação: dados públicos coletados na plataforma mapa.cultura.gov.br, em conformidade com a Lei nº 13.709/2018.';
+    document.getElementById('g_out').textContent = txt;
+    marcar('b4','stamp4');
+    return txt;
+  }
+  document.getElementById('g_ger').addEventListener('click', montar);
+  document.getElementById('g_cop').addEventListener('click', async ()=>{
+    const txt = montar();
+    const ok = document.getElementById('g_ok');
+    try{
+      await navigator.clipboard.writeText(txt);
+      ok.textContent = 'copiado';
+    }catch(e){
+      const r = document.createRange();
+      r.selectNodeContents(document.getElementById('g_out'));
+      const s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      ok.textContent = 'selecionado — use Ctrl+C';
+    }
+    setTimeout(()=>ok.textContent='', 3000);
+  });
+})();
+
+/* ---------- BLOCO 5: eixos ---------- */
+const EIXOS = [
+ {u:1, t:"Patrimônio cultural imaterial e povos originários e tradicionais no Tocantins",
+  p:"Documentário curto, podcast com a comunidade ou exposição fotográfica.",
+  l:"CUNHA FILHO, F. H. Direitos culturais no Brasil. In: SOARES; CUREAU (orgs.). Bens culturais e direitos humanos. São Paulo: Sesc, 2019. · Decreto nº 3.551/2000, arts. 1º a 3º · CF/1988, art. 216."},
+ {u:1, t:"Direitos culturais, Constituição Federal de 1988 e legislações culturais",
+  p:"Podcast, estudo de caso ou banner.",
+  l:"CUNHA FILHO; RIBEIRO. Federalismo brasileiro: significados para a cultura. In: Federalismo e políticas culturais no Brasil. Salvador: EDUFBA, 2013, p. 13-41. · CF/1988, arts. 215 e 216."},
+ {u:1, t:"Racismo, capacitismo e desigualdade no acesso ao financiamento público cultural",
+  p:"Estudo de caso comparativo, infográfico, entrevista em vídeo ou exposição fotográfica.",
+  l:"KAUARK, G. Decolonizar a diversidade cultural. RELACult, v. 3, ed. especial, 2017. · Cruzar com o painel público SALIC Comparar, captação por UF."},
+ {u:1, t:"Ciências Contábeis, decolonialidade e Contabilidade Popular",
+  p:"Ensaio audiovisual, podcast acadêmico, relato de experiência ou oficina.",
+  l:"SAUERBRONN, F. et al. Decolonial studies in accounting? Critical Perspectives on Accounting, v. 99, 2021. · QUIJANO, A. Colonialidade do poder, eurocentrismo e América Latina. CLACSO, 2005."},
+ {u:1, t:"Cultura que gera renda: economia indígena e quilombola",
+  p:"Mapeamento econômico-cultural de uma comunidade, documentário curto, exposição de pintura ou de arte urbana.",
+  l:"SILVA, L. S. R. et al. O território quilombola e sua luta por emancipação, apoderamento e autonomia. Revista da ABPN, v. 13, n. 38, p. 139-170, 2021."},
+ {u:2, t:"Formalização de empreendimentos culturais: MEI, SLU, cooperativa, ONG e associação",
+  p:"Cartilha, website, aplicativo móvel, banner ou oficina.",
+  l:"LC nº 123/2006, arts. 18-A a 18-C · LISBOA, S. M. et al. I Diagnóstico do Mercado Cultural de Jacareí, 2024, cap. 2, p. 64-67 · NATALE; OLIVIERI. Guia brasileiro de produção cultural, cap. 2, p. 33-62 · Cartilha Cultura legal (ACE II/ACCEx III, UFT, 2026)."},
+ {u:2, t:"Incentivos fiscais à cultura: Lei Rouanet, audiovisual e leis locais",
+  p:"Infográfico, vídeo educativo, aplicativo móvel, banner, oficina prática ou cartilha.",
+  l:"Lei nº 8.313/1991, arts. 18 a 26 · Lei nº 14.017/2020 · CESNIK, F. Guia do incentivo à cultura, 2012 · LC nº 278/2013 de Palmas · Edital de Chamamento Público nº 06/FCP/2025."},
+ {u:2, t:"Reforma tributária e cultura: IBS e CBS",
+  p:"Vídeo explicativo, infográfico ou banner.",
+  l:"EC nº 132/2023, art. 156-A · LC nº 214/2025, regimes diferenciados · BRIOZO FILHO, A. Entenda como a reforma tributária afeta o setor cultural · MinC. Mapa Tributário da Economia Criativa, 2018."},
+ {u:2, t:"Destinação do imposto de renda para o setor cultural",
+  p:"Vídeo em série para Instagram ou TikTok, banner ou cartilha.",
+  l:"FERREIRA, K. G. O papel do contador na captação de recursos via Lei Rouanet. TCC, UFT, 2026 · Receita Federal, Projetos Culturais (Lei Rouanet)."},
+ {u:2, t:"Cultura dá lucro? Economia criativa, desenvolvimento e cidades criativas",
+  p:"Manual prático, infográfico ou painel de dados.",
+  l:"CARDOSO, C. Economia da cultura. In: RUBIM, L. Organização e produção da cultura. EdUFBA, 2005, p. 113-144 · FIRJAN. Mapeamento da Indústria Criativa no Brasil, 8. ed., 2025 · DataSebrae, Economia Criativa."},
+ {u:2, t:"Quem cria, ganha? Direito autoral e remuneração do trabalho criativo",
+  p:"Cartilha ou guia digital, podcast jurídico, vídeo educativo curto ou oficina de orientação ao agente cultural.",
+  l:"Lei nº 9.610/1998 · NATALE; OLIVIERI. Guia brasileiro de produção cultural, cap. 3, p. 63-86 · CPC 04 (R1), ativo intangível."},
+ {u:2, t:"Quanto vale a cultura? Ativos intangíveis e propriedade intelectual coletiva de povos tradicionais e indígenas",
+  p:"Podcast jurídico ou cartilha digital.",
+  l:"CUNHA, M. C. da. Cultura com aspas e outros ensaios. Cosac Naify, 2009, p. 311-314 e 335-343 · CPC 04 (R1) · Resolução CVM nº 93/2022."},
+ {u:2, t:"Por que empresários e sociedades empresariais investem em cultura? Incentivo fiscal e estratégia de marca",
+  p:"Guia para empresários e sociedades empresariais ou estudo de caso.",
+  l:"COLLET; FENTON. Manual do patrocínio. DVS, 2014 · MALAGODI; CESNIK. Projetos culturais. Escrituras, 2004 · NATALE; OLIVIERI, cap. 7, p. 197-224."},
+ {u:2, t:"Prestação de contas em editais públicos de fomento à cultura",
+  p:"Palestra ou oficina, cartilha digital ou modelo comentado de prestação de contas.",
+  l:"OLIVEIRA, A. T. et al. Prestação de contas para coletivos culturais. Cartilha ACE II, UFT, 2026 · Cartilha Lei Aldir Blanc MG, SECULT-MG, 2021 · Decreto nº 11.453/2023."},
+ {u:2, t:"Calendário de obrigações tributárias acessórias do agente cultural",
+  p:"Calendário visual anual, infográfico ou cartilha digital, com checklist de declarações, prazos e penalidades.",
+  l:"Receita Federal. Convocação de pessoas jurídicas que deixaram de entregar obrigações acessórias, jan. 2026 · LC nº 123/2006, arts. 25, 26 e 38-A · MinC. Mapa Tributário da Economia Criativa."},
+ {u:2, t:"Organização do controle financeiro do dia a dia para agentes culturais",
+  p:"Planilha modelo desenvolvida por código-fonte, acompanhada de vídeo curto de uso ou cartilha.",
+  l:"NATALE; OLIVIERI. Guia brasileiro de produção cultural, cap. 4 · SEBRAE. Cartilha projetos culturais, 2014."},
+ {u:2, t:"Precificação do trabalho artístico",
+  p:"Guia ou oficina de formação de preço para um serviço artístico concreto, com memória de cálculo de custos, hora de trabalho e margem.",
+  l:"SEBRAE. Negócios criativos: precificação baseada em valor · MARINS; DAVEL. Empreendedorismo cultural e artístico. RPCA, v. 14, n. 4, 2021."},
+ {u:2, t:"Economia solidária e formas não-capitalistas de organização cultural",
+  p:"Mapeamento ou relato de experiência.",
+  l:"SINGER, P. Introdução à economia solidária. Perseu Abramo, 2002, cap. I, p. 7-23 · HEMAIS; QUINTÃO; BARROS. RAC, v. 28, n. 2, 2024."}
+];
+(function(){
+  const box = document.getElementById('eixos');
+  EIXOS.forEach((e,i)=>{
+    const d = document.createElement('details');
+    d.className = 'eixo';
+    d.dataset.u = e.u;
+    d.dataset.txt = (e.t+' '+e.p+' '+e.l).toLowerCase();
+    d.innerHTML =
+      '<summary><span class="num">'+String(i+1).padStart(2,'0')+'</span>'+
+      '<span><span class="tit">'+e.t+'</span>'+
+      '<span class="un">Unidade '+e.u+'</span></span></summary>'+
+      '<div class="body"><h4>Produto sugerido</h4><p>'+e.p+'</p>'+
+      '<h4>Leitura recomendada</h4><p>'+e.l+'</p></div>';
+    box.appendChild(d);
+  });
+  let abertos = 0;
+  box.addEventListener('toggle', e=>{
+    if(e.target.open){ abertos++; if(abertos>=3) marcar('b5','stamp5'); }
+  }, true);
+
+  const chips = document.querySelectorAll('.chip[data-f]');
+  const busca = document.getElementById('e_busca');
+  let filtro = 'all';
+  function aplicar(){
+    const q = busca.value.trim().toLowerCase();
+    box.querySelectorAll('.eixo').forEach(d=>{
+      const okU = (filtro === 'all') || (d.dataset.u === filtro);
+      const okQ = !q || d.dataset.txt.includes(q);
+      d.style.display = (okU && okQ) ? '' : 'none';
+    });
+  }
+  chips.forEach(c=>c.addEventListener('click', ()=>{
+    chips.forEach(x=>x.setAttribute('aria-pressed','false'));
+    c.setAttribute('aria-pressed','true');
+    filtro = c.dataset.f; aplicar();
+  }));
+  busca.addEventListener('input', aplicar);
+})();
+
+/* ---------- BLOCO 6: calendário ---------- */
+const CAL = [
+ {d:"08/08", t:"Abertura: por que um contador precisa entender de cultura?", r:"Extensão universitária e o papel social da profissão contábil. Turino; Darcy Ribeiro.", now:true},
+ {d:"22/08", t:"Para que serve a contabilidade e para quem ela foi criada?", r:"Colonialidade do saber contábil. Cultura indígena, quilombola e do cerrado como economia. Abertura do Garimpo no Fórum. Síncrono."},
+ {d:"29/08", t:"ETAPA 1 · Diagnóstico do grupo", r:"Encerramento do Garimpo. Identificação do agente cultural e de sua situação formal e financeira.", key:true},
+ {d:"12/09", t:"Reforma tributária e o setor cultural", r:"O que muda no caixa do artista. IBS, CBS, imunidades e regimes diferenciados. EC nº 132/2023; LC nº 214/2025."},
+ {d:"19/09", t:"Mentoria: do diagnóstico ao projeto", r:"Por agendamento."},
+ {d:"26/09", t:"ETAPA 2 · Projeto do grupo e mentoria coletiva", r:"Submissão pela ferramenta Tarefa no AVA.", key:true},
+ {d:"17/10", t:"Mentoria: desenvolvimento do produto", r:"Por agendamento."},
+ {d:"24/10", t:"Mentoria: desenvolvimento do produto", r:"Por agendamento."},
+ {d:"31/10", t:"ETAPA 3 · Checkpoint do produto", r:"Documento-padrão de uma página e retorno oral. Síncrono.", key:true},
+ {d:"07/11", t:"Reta final", r:"Mentoria para ajustes técnicos e orientações sobre a entrega. Por agendamento."},
+ {d:"14/11", t:"ETAPA 4 · Entrega do produto final", r:"Postagem no AVA até 12h e socialização dos trabalhos.", key:true}
+];
+(function(){
+  document.getElementById('tl').innerHTML = CAL.map(c=>
+    '<li class="'+(c.now?'now':'')+(c.key?' key':'')+'">'+
+    '<div class="d">'+c.d+'</div><div class="t">'+c.t+'</div><div class="r">'+c.r+'</div></li>'
+  ).join('');
+})();
+
+/* ---------- saída ---------- */
+document.getElementById('saida_btn').addEventListener('click', ()=>{
+  const v = document.getElementById('saida_in').value.trim();
+  const ok = document.getElementById('saida_ok');
+  ok.textContent = v ? 'registrado — agora leia em voz alta' : 'escreva a frase antes de registrar';
+  setTimeout(()=>ok.textContent='', 4000);
+});
+</script>
+</body>
+</html>
